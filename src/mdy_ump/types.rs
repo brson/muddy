@@ -1,7 +1,3 @@
-//! Universal MIDI Packet format
-
-#![allow(unused)]
-
 use anyhow::{Result, Error, bail};
 use std::convert::{TryInto, TryFrom};
 use num_enum::TryFromPrimitive;
