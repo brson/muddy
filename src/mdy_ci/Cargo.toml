@@ -1,0 +1,12 @@
+[package]
+name = "mdy_ci"
+version = "0.1.0"
+authors = ["Brian Anderson <andersrb@gmail.com>"]
+edition = "2018"
+
+[lib]
+path = "mdy_ci.rs"
+
+[dependencies]
+anyhow = "1.0.28"
+num_enum = "0.4.3"
