@@ -30,14 +30,12 @@ mod ci_negotiation {
         Midi2v1,
     }
 
-    pub struct Extensions;
-
     impl NegotiationBytes {
-        fn protocol_type(&self) -> Result<ProtocolType> {
+        pub fn protocol_type(&self) -> Result<ProtocolType> {
             Ok(self.data[0].try_into()?)
         }
 
-        fn protocol_version(&self) -> Result<ProtocolVersion> {
+        pub fn protocol_version(&self) -> Result<ProtocolVersion> {
             let vbyte = self.data[1];
             if vbyte != 0x0 {
                 bail!("unrecognized protocol version: {}", vbyte);
@@ -49,7 +47,7 @@ mod ci_negotiation {
             })
         }
 
-        fn validate(&self) -> Result<()> {
+        pub fn validate(&self) -> Result<()> {
             let reserved4 = self.data[3];
             let reserved5 = self.data[4];
             if reserved4 != 0 {
@@ -60,5 +58,21 @@ mod ci_negotiation {
             }
             Ok(())
         }
+
+        pub fn midi1_extensions(&self) -> Result<Midi1Extensions> {
+            if self.protocol_type()? != ProtocolType::Midi1 {
+                bail!("midi 1 extensions requested for MIDI 2 protocol negotiation");
+            }
+            let ext_byte = self.data[2];
+            Ok(Midi1Extensions {
+                large_packets: ext_byte & 2 != 0,
+                jitter_reduction: ext_byte & 1 != 0,
+            })
+        }
+    }
+
+    pub struct Midi1Extensions {
+        pub large_packets: bool,
+        pub jitter_reduction: bool,
     }
 }
