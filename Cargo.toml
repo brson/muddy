@@ -1,5 +1,6 @@
 [workspace]
 members = [
 "src/mdy_ci",
+"src/mdy_msg",
 "src/mdy_ump",
 ]
