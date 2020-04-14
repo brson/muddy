@@ -37,6 +37,29 @@ pub mod v1 {
             Ok(())
         }
 
+        pub fn message_type(&self) -> Result<Message> {
+            panic!()
+        }
+
+        pub fn num_data_bytes(&self) -> Result<DataBytes> {
+            let msg = self.message_type()?;
+            use Message::*;
+            use ChannelMessage::*;
+            use SystemMessage::*;
+            use DataBytes::*;
+            Ok(match msg {
+                Channel(NoteOff) => Fixed(2),
+                Channel(NoteOn) => Fixed(2),
+                Channel(PolyphonicKeyPressureOrAftertouch) => Fixed(2),
+                Channel(ControlChangeOrChannelMode) => Fixed(2),
+                Channel(ProgramChange) => Fixed(1),
+                Channel(ChannelPressureOrAftertouch) => Fixed(1),
+                Channel(PitchBendChange) => Fixed(2),
+                System(Exclusive) => UntilEox,
+                System(Common) => panic!(),
+                System(RealTime) => Fixed(0),
+            })
+        }
     }
 
     pub enum Message {
@@ -59,6 +82,11 @@ pub mod v1 {
     #[derive(Copy, Clone)]
     pub enum SystemMessage {
         Exclusive, Common, RealTime,
+    }
+
+    pub enum DataBytes {
+        Fixed(u8),
+        UntilEox,
     }
 
     impl DataByte {
